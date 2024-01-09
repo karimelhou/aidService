@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Building the Docker image
-                    dockerImage = docker.build("helloworld-app:${env.BUILD_ID}")
+                    dockerImage = docker.build("aidservice-app:${env.BUILD_ID}")
                 }
             }
         }
@@ -41,29 +41,29 @@ pipeline {
             steps {
                 script {
                     // Tagging the image before pushing
-                    sh "docker tag helloworld-app:${env.BUILD_ID} karimelhou/mydocker:${env.BUILD_ID}"
+                    sh "docker tag aidservice-app:${env.BUILD_ID} karimelhou/aidservice:${env.BUILD_ID}"
                     // Pushing the image to Docker Hub
-                    sh "docker push karimelhou/mydocker:${env.BUILD_ID}"
+                    sh "docker push karimelhou/aidservice:${env.BUILD_ID}"
                 }
             }
         }
 
-        //stage('Docker Run') {
-          //  steps {
-            //    script {
-              //      echo "BUILD_ID: ${env.BUILD_ID}"
-                //    sh "docker run -d -p 8081:8081 helloworld-app:${env.BUILD_ID}"
-                //}
-            //}
-        //}
-        stage('Trigger Update Job') {
+        stage('Docker Run') {
             steps {
                 script {
-                    // Triggering another Jenkins job with the current BUILD_ID
-                    build job: 'updatepush', parameters: [string(name: 'IMAGE_TAG', value: "${env.BUILD_ID}")]
+                    echo "BUILD_ID: ${env.BUILD_ID}"
+                    sh "docker run -d -p 8381:8381 aidservice-app:${env.BUILD_ID}"
                 }
             }
         }
+       // stage('Trigger Update Job') {
+         //   steps {
+           //     script {
+                    // Triggering another Jenkins job with the current BUILD_ID
+             //       build job: 'updatepush', parameters: [string(name: 'IMAGE_TAG', value: "${env.BUILD_ID}")]
+              //  }
+          //  }
+      //  }
     }
 
     post {
